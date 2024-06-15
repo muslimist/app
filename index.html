@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>muslimist</title>
+    <link rel="manifest" href="manifest.json">
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js')
+            .then((registration) => {
+                console.log('ServiceWorker registration successful with scope: ', registration.scope);
+            }, (error) => {
+                console.log('ServiceWorker registration failed: ', error);
+            });
+        }
+    </script>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            overflow: hidden;
+        }
+        #background-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* Dark overlay */
+            z-index: 1;
+        }
+        #content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+        }
+        #current-time {
+            font-size: 3em;
+            margin-bottom: 20px;
+            color: white;
+        }
+        .time-container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+        }
+        .time-box {
+            background: #fff;
+            padding: 20px;
+            margin: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            flex: 1;
+            text-align: center;
+        }
+        .time {
+            font-size: 2em;
+        }
+        #settingsButton {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            font-size: 2em;
+            cursor: pointer;
+            z-index: 3;
+        }
+        .modal {
+            display: none; 
+            position: fixed;
+            z-index: 4; 
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; 
+            background-color: rgb(0,0,0); 
+            background-color: rgba(0,0,0,0.4); 
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; 
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; 
+            max-width: 600px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        #startButton {
+            padding: 10px 20px;
+            font-size: 1.2em;
+            margin-top: 20px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .settings div {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="background-overlay"></div>
+    <div id="content">
+        <div id="current-time">--:--:--</div>
+        <div id="current-prayer-time" style="color: white; font-size: 2em; margin-bottom: 10px;"></div>
+        <div id="time-left" style="color: white; font-size: 1.5em;"></div>
+        <div class="time-container">
+            <div class="time-box">
+                <div>Fajr</div>
+                <div class="time" id="fajr">--:--:--</div>
+            </div>
+            <div class="time-box">
+                <div>Dhuhr</div>
+                <div class="time" id="dhuhr">--:--:--</div>
+            </div>
+            <div class="time-box">
+                <div>Asr</div>
+                <div class="time" id="asr">--:--:--</div>
+            </div>
+            <div class="time-box">
+                <div>Maghrib</div>
+                <div class="time" id="maghrib">--:--:--</div>
+            </div>
+            <div class="time-box">
+                <div>Isha</div>
+                <div class="time" id="isha">--:--:--</div>
+            </div>
+        </div>
+
+        <div id="settingsButton">⚙️</div>
+
+        <div id="settingsModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div class="settings">
+                    <div>
+                        <label for="fajrAthan">Fajr Athan:</label>
+                        <select id="fajrAthan">
+                            <option value="athan_fajr.mp3">athan_fajr.mp3</option>
+                            <option value="none">None</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="dhuhrAthan">Dhuhr Athan:</label>
+                        <select id="dhuhrAthan">
+                            <option value="athan.mp3">athan.mp3</option>
+                            <option value="none">None</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="asrAthan">Asr Athan:</label>
+                        <select id="asrAthan">
+                            <option value="athan.mp3">athan.mp3</option>
+                            <option value="none">None</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="maghribAthan">Maghrib Athan:</label>
+                        <select id="maghribAthan">
+                            <option value="athan.mp3">athan.mp3</option>
+                            <option value="none">None</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="ishaAthan">Isha Athan:</label>
+                        <select id="ishaAthan">
+                            <option value="athan.mp3">athan.mp3</option>
+                            <option value="none">None</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="duaaInterval">Duaa Interval:</label>
+                        <select id="duaaInterval">
+                            <option value="10">10s</option>
+                            <option value="30">30s</option>
+                            <option value="60">1m</option>
+                            <option value="300">5m</option>
+                            <option value="600">10m</option>
+                            <option value="1800">30m</option>
+                            <option value="3600">1hr</option>
+                            <option value="7200">2hr</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="latitude">Latitude:</label>
+                        <input type="number" id="latitude" step="0.000001">
+                        <button id="getLocationButton">Get Location</button>
+                    </div>
+                    <div>
+                        <label for="longitude">Longitude:</label>
+                        <input type="number" id="longitude" step="0.000001">
+                    </div>
+                    <div>
+                        <label for="timezone">Timezone:</label>
+                        <select id="timezone">
+                            <option value="-12">-12:00</option>
+                            <option value="-11">-11:00</option>
+                            <option value="-10">-10:00</option>
+                            <option value="-9.5">-09:30</option>
+                            <option value="-9">-09:00</option>
+                            <option value="-8">-08:00</option>
+                            <option value="-7">-07:00</option>
+                            <option value="-6">-06:00</option>
+                            <option value="-5" selected="selected">-05:00</option>
+                            <option value="-4">-04:00</option>
+                            <option value="-3.5">-03:30</option>
+                            <option value="-3">-03:00</option>
+                            <option value="-2">-02:00</option>
+                            <option value="-1">-01:00</option>
+                            <option value="0">±00:00</option>
+                            <option value="+1">+01:00</option>
+                            <option value="+2">+02:00</option>
+                            <option value="+3">+03:00</option>
+                            <option value="+3.5">+03:30</option>
+                            <option value="+4">+04:00</option>
+                            <option value="+4.5">+04:30</option>
+                            <option value="+5">+05:00</option>
+                            <option value="+5.5">+05:30</option>
+                            <option value="+5.75">+05:45</option>
+                            <option value="+6">+06:00</option>
+                            <option value="+6.5">+06:30</option>
+                            <option value="+7">+07:00</option>
+                            <option value="+8">+08:00</option>
+                            <option value="+8.75">+08:45</option>
+                            <option value="+9">+09:00</option>
+                            <option value="+9.5">+09:30</option>
+                            <option value="+10">+10:00</option>
+                            <option value="+10.5">+10:30</option>
+                            <option value="+11">+11:00</option>
+                            <option value="+12">+12:00</option>
+                            <option value="+12.75">+12:45</option>
+                            <option value="+13">+13:00</option>
+                            <option value="+14">+14:00</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="dst">Daylight Savings Time:</label>
+                        <select id="dst">
+                            <option value="auto">Auto</option>
+                            <option value="0">Disabled</option>
+                            <option value="1">Enabled</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="calculationMethod">Calculation Method:</label>
+                        <select id="calculationMethod">
+                            <option value="MWL">Muslim World League (MWL)</option>
+                            <option value="ISNA" selected="selected">Islamic Society of North America (ISNA)</option>
+                            <option value="Egypt">Egyptian General Authority of Survey</option>
+                            <option value="Makkah">Umm al-Qura University, Makkah</option>
+                            <option value="Karachi">University of Islamic Sciences, Karachi</option>
+                            <option value="Jafari">Shia Ithna-Ashari (Jafari)</option>
+                            <option value="Tehran">Institute of Geophysics, University of Tehran</option>
+                            <option value="Algeria">Algerian Minister of Religious Affairs and Wakfs</option>
+                            <option value="Diyanet">Diyanet İşleri Başkanlığı</option>
+                            <option value="EgyptBis">Egyptian General Authority (Bis)</option>
+                            <option value="FixedIsha">Fixed Isha Angle Interval</option>
+                            <option value="FranceUOIF">France UOIF - Angle 12°</option>
+                            <option value="France15">France - Angle 15°</option>
+                            <option value="France18">France - Angle 18°</option>
+                            <option value="JAKIM">JAKIM (Jabatan Kemajuan Islam Malaysia)</option>
+                            <option value="MUIS">MUIS (Majlis Ugama Islam Singapura)</option>
+                            <option value="Kemenag">SIHAT/KEMENAG (Kementerian Agama RI)</option>
+                            <option value="Tunisia">Tunisian Ministry of Religious Affairs</option>
+                            <option value="AwqafUAE">UAE General Authority of Islamic Affairs And Endowments</option>
+                            <option value="LondonUIPT">London Unified Islamic Prayer Timetable</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="backgroundInterval">Background Change Interval:</label>
+                        <select id="backgroundInterval">
+                            <option value="10">10s</option>
+                            <option value="30">30s</option>
+                            <option value="60">1m</option>
+                            <option value="300">5m</option>
+                            <option value="600">10m</option>
+                            <option value="1800">30m</option>
+                            <option value="3600">1hr</option>
+                            <option value="7200">2hr</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <audio id="athanAudio"></audio>
+        <audio id="duaaAudio"></audio>
+        <button id="startButton">Start</button>
+    </div>
+    <script src="praytimes.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
