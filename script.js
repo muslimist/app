@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const settingsModal = document.getElementById('settingsModal');
     const closeModalButton = document.querySelector('.close');
     const getLocationButton = document.getElementById('getLocationButton');
+    const fullscreenButton = document.getElementById('fullscreenButton');
     const prayerTimesElements = {
         fajr: document.getElementById('fajr'),
         dhuhr: document.getElementById('dhuhr'),
@@ -38,6 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let lastPlayedPrayer = null;
     let lastDuaaTime = 0;
     let backgroundChangeTimeout;
+    let wakeLock = null;
 
     // Initialize settings in local storage if not already set
     function initializeSettings() {
@@ -162,6 +164,28 @@ document.addEventListener('DOMContentLoaded', function() {
             alert("Geolocation is not supported by this browser.");
         }
     });
+
+    // Fullscreen toggle
+    fullscreenButton.addEventListener('click', () => {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+        } else if (document.exitFullscreen) {
+            document.exitFullscreen();
+        }
+    });
+
+    // Screen Wake Lock
+    async function requestWakeLock() {
+        try {
+            wakeLock = await navigator.wakeLock.request('screen');
+            wakeLock.addEventListener('release', () => {
+                console.log('Screen Wake Lock released');
+            });
+            console.log('Screen Wake Lock is active');
+        } catch (err) {
+            console.error(`${err.name}, ${err.message}`);
+        }
+    }
 
     // Calculate and display prayer times
     function calculatePrayerTimes() {
@@ -336,6 +360,7 @@ document.addEventListener('DOMContentLoaded', function() {
         setInterval(checkTime, 200); // Check the time every 200 milliseconds
         startButton.style.display = 'none';
         resetBackgroundChangeInterval();
+        requestWakeLock();
     });
 
     initializeSettings(); // Initialize settings if not already set
