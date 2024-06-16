@@ -208,10 +208,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function getCurrentAndNextPrayerTimes(times) {
-        const now = new Date("Sat Jun 14 2024 12:50:26 GMT-0400 (Eastern Daylight Time)");
-        console.log(now)
+        const now = new Date();
         const today = now.toDateString();
-        console.log(today)
         const currentDateTime = new Date(`${today} ${now.toTimeString().split(' ')[0]}`);
         let currentPrayer = null;
         let nextPrayer = null;
