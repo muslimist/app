@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const dstSetting = document.getElementById('dst');
     const calculationMethodSetting = document.getElementById('calculationMethod');
     const backgroundIntervalSetting = document.getElementById('backgroundInterval');
-    const duaaFiles = ['eid.mp4', 'eid.mp4', 'eid.mp4', 'eid.mp4', 'eid.mp4', 'eid.mp4', 'eid.mp4', 'eid.mp4', 'eid.mp4', 'eid.mp4', 'eid.mp4', 'eid.mp4', 'eid.mp4', 'duaa_a.wav', 'duaa_b.wav', 'duaa_c.wav', 'duaa_d.wav', 'duaa_e.wav', 'duaa_f.wav', 'duaa_g.wav', 'duaa_h.wav', 'duaa_i.wav', 'duaa_j.wav', 'duaa_k.wav'];
+    const duaaFiles = ['eid.mp3', 'eid.mp3', 'eid.mp3', 'eid.mp3', 'eid.mp3', 'eid.mp3', 'eid.mp3', 'eid.mp3', 'eid.mp3', 'eid.mp3', 'eid.mp3', 'eid.mp3', 'eid.mp3', 'duaa_a.wav', 'duaa_b.wav', 'duaa_c.wav', 'duaa_d.wav', 'duaa_e.wav', 'duaa_f.wav', 'duaa_g.wav', 'duaa_h.wav', 'duaa_i.wav', 'duaa_j.wav', 'duaa_k.wav'];
 
     let lastCheckedSecond = null;
     let lastPlayedPrayer = null;
