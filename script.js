@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const dstSetting = document.getElementById('dst');
     const calculationMethodSetting = document.getElementById('calculationMethod');
     const backgroundIntervalSetting = document.getElementById('backgroundInterval');
-    const duaaFiles = ['duaa_a.wav', 'duaa_b.wav', 'duaa_c.wav', 'duaa_d.wav', 'duaa_e.wav', 'duaa_f.wav', 'duaa_g.wav', 'duaa_h.wav', 'duaa_i.wav', 'duaa_j.wav', 'duaa_k.wav'];
+    const duaaFiles = ['eid.mp4', 'eid.mp4', 'eid.mp4', 'eid.mp4', 'eid.mp4', 'eid.mp4', 'eid.mp4', 'eid.mp4', 'eid.mp4', 'eid.mp4', 'eid.mp4', 'eid.mp4', 'eid.mp4', 'duaa_a.wav', 'duaa_b.wav', 'duaa_c.wav', 'duaa_d.wav', 'duaa_e.wav', 'duaa_f.wav', 'duaa_g.wav', 'duaa_h.wav', 'duaa_i.wav', 'duaa_j.wav', 'duaa_k.wav'];
 
     let lastCheckedSecond = null;
     let lastPlayedPrayer = null;
@@ -208,8 +208,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function getCurrentAndNextPrayerTimes(times) {
-        const now = new Date();
+        const now = new Date("Sat Jun 14 2024 12:50:26 GMT-0400 (Eastern Daylight Time)");
+        console.log(now)
         const today = now.toDateString();
+        console.log(today)
         const currentDateTime = new Date(`${today} ${now.toTimeString().split(' ')[0]}`);
         let currentPrayer = null;
         let nextPrayer = null;
@@ -242,7 +244,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function getTimeLeftUntil(nextPrayerTime) {
         const now = new Date();
-        const diffMs = nextPrayerTime - now;
+        let diffMs = nextPrayerTime - now;
+
+        // If the next prayer time is in the past, adjust it to the next day
+        if (diffMs < 0) {
+            nextPrayerTime.setDate(nextPrayerTime.getDate() + 1);
+            diffMs = nextPrayerTime - now;
+        }
+
         const diffHrs = Math.floor((diffMs % 86400000) / 3600000);
         const diffMins = Math.floor(((diffMs % 86400000) % 3600000) / 60000);
         const diffSecs = Math.floor((((diffMs % 86400000) % 3600000) % 60000) / 1000);
@@ -280,7 +289,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const times = calculatePrayerTimes();
         const { currentPrayer, nextPrayer, nextPrayerTime } = getCurrentAndNextPrayerTimes(times);
 
-        currentPrayerTimeDisplay.textContent = `Current Prayer: ${currentPrayer.charAt(0).toUpperCase() + currentPrayer.slice(1)}`;
+        if (currentPrayer) {
+            currentPrayerTimeDisplay.textContent = `Current Prayer: ${currentPrayer.charAt(0).toUpperCase() + currentPrayer.slice(1)}`;
+        } else {
+            currentPrayerTimeDisplay.textContent = `Current Prayer: None`;
+        }
         timeLeftDisplay.textContent = `Time Left: ${getTimeLeftUntil(nextPrayerTime)}`;
 
         if (currentTime === times.fajr && lastPlayedPrayer !== 'fajr') {
