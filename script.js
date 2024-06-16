@@ -353,8 +353,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function getRandomBackground() {
-        const randomIndex = Math.floor(Math.random() * 10) + 1;
-        document.body.style.backgroundImage = `url('bg/bg${randomIndex}.jpg')`;
+        // const randomIndex = Math.floor(Math.random() * 10) + 1;
+        // document.body.style.backgroundImage = `url('bg/bg${randomIndex}.jpg')`;
+        document.body.style.backgroundImage = `url('bg/bg0.jpg')`;
     }
 
     function resetBackgroundChangeInterval() {
